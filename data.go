@@ -15,7 +15,7 @@ func (self *Database) InitData() {
 	self.Con, err = sql.Open("sqlite3", "data.sqlite3")
 	checkErr(err)
 
-	sqlstmt := `CREATE TABLE service_registry(
+	sqlstmt := `CREATE TABLE IF NOT EXISTS service_registry(
 		name TEXT NOT NULL,
 		hostname TEXT NOT NULL,
 		ipAddr TEXT NOT NULL,
@@ -28,4 +28,15 @@ func (self *Database) InitData() {
 	checkErr(err)
 
 	stmt.Exec()
+}
+
+func (self *Database) PostService(s ServiceRegistry) error {
+	sqlstmt := "INSERT INTO service_registry(name, hostname, ipAddr, status, port, healthCheckUrl) VALUES(?,?,?,?,?,?)"
+	stmt, err := self.Con.Prepare(sqlstmt)
+	if err != nil {
+		return err
+	}
+
+	stmt.Exec(s.Name, s.Hostname, s.IpAddr, s.Status, s.Port, s.HealthCheckUrl)
+	return nil
 }

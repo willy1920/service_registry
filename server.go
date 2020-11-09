@@ -20,12 +20,12 @@ type ServiceRegistry struct{
 	HealthCheckUrl string `json:"healthCheckUrl"`
 }
 
-func (self *ServiceRegistry) startServer() {
-	http.HandleFunc("/service_registry", ServiceRegistryAPI)
+func (self *Server) startServer() {
+	http.HandleFunc("/service_registry", self.ServiceRegistryAPI)
 	log.Fatal(http.ListenAndServe(":50001", nil))
 }
 
-func ServiceRegistryAPI(w http.ResponseWriter, r *http.Request) {
+func (self *Server) ServiceRegistryAPI(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		decoder := json.NewDecoder(r.Body)
@@ -33,6 +33,6 @@ func ServiceRegistryAPI(w http.ResponseWriter, r *http.Request) {
 		err := decoder.Decode(&service)
 		checkErr(err)
 
-		log.Println(service)
+		self.Database.PostService(service)
 	}
 }
