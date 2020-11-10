@@ -21,5 +21,6 @@ func main() {
 	}()
 
 	s.Database.InitData()
+	s.Check()
 	s.startServer()
 }

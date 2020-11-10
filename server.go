@@ -17,6 +17,7 @@ type ServiceRegistry struct{
 	IpAddr string `json:"ipAddr"`
 	Status string `json:"status"`
 	Port int `json:"port"`
+	Type string `json:"type"`
 	HealthCheckUrl string `json:"healthCheckUrl"`
 }
 
@@ -33,6 +34,7 @@ func (self *Server) ServiceRegistryAPI(w http.ResponseWriter, r *http.Request) {
 		err := decoder.Decode(&service)
 		checkErr(err)
 
-		self.Database.PostService(service)
+		err = self.Database.PostService(service)
+		checkErr(err)
 	}
 }
